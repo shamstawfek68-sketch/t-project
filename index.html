@@ -729,7 +729,7 @@
       if(tabId === 'reports') generateMonthlyReport();
     }
 
-    // FETCH DATA FROM BACKEND API
+   // FETCH DATA FROM BACKEND API
     async function loadAppData() {
       const statusText = document.getElementById("syncStatusText");
       const statusDot = document.getElementById("syncDot");
@@ -749,49 +749,13 @@
           throw new Error(json.message || "Failed to parse data");
         }
       } catch (err) {
-        console.warn("Backend connection fallback. Using localized state.", err);
-        statusText.innerText = "تعذر الاتصال المباشر (وضع العرض المحلي)";
+        console.warn("تعذر الاتصال المباشر بالقاعدة.", err);
+        statusText.innerText = "تعذر الاتصال المباشر";
         statusDot.className = "w-2.5 h-2.5 rounded-full bg-rose-500";
-        
-        // Populate fallback mock dataset if empty
-        if(!appData.Partners || appData.Partners.length === 0) {
-          populateFallbackDemoData();
-        }
       }
 
       renderAllComponents();
-    }
-
-    function populateFallbackDemoData() {
-      appData = {
-        Units: [
-          { UnitID: "U1", UnitNo: "شقة 101", Type: "شقة", Floor: "1", TenantName: "أحمد محمود", TenantPhone: "01012345678", MonthlyRent: 3500, Status: "مؤجرة" },
-          { UnitID: "U2", UnitNo: "شقة 102", Type: "شقة", Floor: "1", TenantName: "محمد علي", TenantPhone: "01122334455", MonthlyRent: 3500, Status: "مؤجرة" },
-          { UnitID: "U3", UnitNo: "مخزن 1", Type: "مخزن", Floor: "الأرضي", TenantName: "شركة السلام", TenantPhone: "01200001111", MonthlyRent: 5000, Status: "مؤجرة" },
-          { UnitID: "U4", UnitNo: "شقة 201", Type: "شقة", Floor: "2", TenantName: "", TenantPhone: "", MonthlyRent: 4000, Status: "شاغرة" }
-        ],
-        RentPayments: [
-          { PaymentID: "P1", UnitNo: "شقة 101", TenantName: "أحمد محمود", Month: "12", Year: "2026", AmountDue: 3500, AmountPaid: 3500, AmountRemaining: 0, PaymentDate: "2026-12-05", PaymentMethod: "نقدي" },
-          { PaymentID: "P2", UnitNo: "شقة 102", TenantName: "محمد علي", Month: "12", Year: "2026", AmountDue: 3500, AmountPaid: 2000, AmountRemaining: 1500, PaymentDate: "2026-12-08", PaymentMethod: "تحويل بنكي" }
-        ],
-        Partners: [
-          { PartnerID: "PARTNER_1", Name: "الشريك الأول", Phone: "01000000001", SharePercentage: 50, Notes: "شريك رئيسي" },
-          { PartnerID: "PARTNER_2", Name: "الشريك الثاني", Phone: "01000000002", SharePercentage: 30, Notes: "شريك مساهم" },
-          { PartnerID: "PARTNER_3", Name: "الشريك الثالث", Phone: "01000000003", SharePercentage: 20, Notes: "شريك مساهم" }
-        ],
-        Withdrawals: [
-          { WithdrawalID: "W1", PartnerName: "الشريك الأول", Amount: 1500, Date: "2026-12-10", Month: "12", Reason: "مصروف شخصي", Category: "تحت حساب الأرباح", PaymentMethod: "نقدي" }
-        ],
-        Expenses: [
-          { ExpenseID: "E1", Category: "نظافة", Description: "نظافة السلم والمدخل", Amount: 500, Date: "2026-12-02", Month: "12", Beneficiary: "عامل النظافة", PaymentMethod: "نقدي" },
-          { ExpenseID: "E2", Category: "كهرباء", Description: "فاتورة كهرباء الخدمات", Amount: 800, Date: "2026-12-12", Month: "12", Beneficiary: "شركة الكهرباء", PaymentMethod: "نقدي" }
-        ],
-        OtherIncome: [
-          { IncomeID: "I1", Description: "إيراد إعلانات الواجهة", Amount: 1200, Date: "2026-12-01", Category: "إيرادات متنوعة", PaymentMethod: "نقدي" }
-        ]
-      };
-    }
-
+    }S
     // RENDER ALL VIEWS
     function renderAllComponents() {
       renderDashboardStats();
@@ -920,12 +884,15 @@
     // 2. UNITS MANAGEMENT
     function renderUnits() {
       const tbody = document.getElementById("unitsTableBody");
+      if(!tbody) return;
       tbody.innerHTML = "";
-      const search = (document.getElementById("unitSearchInput").value || "").toLowerCase();
+      
+      const searchInput = document.getElementById("unitSearchInput");
+      const search = searchInput ? (searchInput.value || "").toLowerCase() : "";
       
       const units = (appData.Units || []).filter(u => 
-        (u.UnitNo || "").toLowerCase().includes(search) || 
-        (u.TenantName || "").toLowerCase().includes(search)
+        String(u.UnitNo || "").toLowerCase().includes(search) || 
+        String(u.TenantName || "").toLowerCase().includes(search)
       );
 
       if(units.length === 0) {
@@ -954,7 +921,6 @@
           </tr>`;
       });
     }
-
     // 3. RENTALS & COLLECTIONS
     function renderRentals() {
       const tbody = document.getElementById("rentalsTableBody");
