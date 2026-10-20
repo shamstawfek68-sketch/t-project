@@ -1,0 +1,1528 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>برج توفيق — TAWFIQ TOWER MANAGEMENT SYSTEM</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Google Fonts: Cairo -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- Tailwind Configuration for Custom Theme Colors -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            sage: {
+              50: '#F4F7F5',
+              100: '#E8EDE9',
+              200: '#C8D6CC',
+              300: '#A8BFB0',
+              500: '#4A6B5B',
+              700: '#385245',
+              800: '#2F4439',
+              900: '#1F2E26',
+            },
+            cream: {
+              50: '#FAF8F5',
+              100: '#F9F6F0',
+              200: '#F0EAE1',
+              300: '#E5DBD0',
+            }
+          },
+          fontFamily: {
+            cairo: ['Cairo', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      font-family: 'Cairo', sans-serif;
+      background-color: #F9F6F0;
+      color: #1F2E26;
+    }
+    
+    /* Custom Scrollbars */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #F0EAE1;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #A8BFB0;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #4A6B5B;
+    }
+
+    @media print {
+      aside, header, .no-print {
+        display: none !important;
+      }
+      main {
+        padding: 0 !important;
+        margin: 0 !important;
+        overflow: visible !important;
+      }
+      .print-area {
+        box-shadow: none !important;
+        border: none !important;
+      }
+    }
+  </style>
+</head>
+<body class="flex h-screen overflow-hidden bg-cream-100">
+
+  <!-- Sidebar / Navigation Menu -->
+  <aside id="sidebar" class="w-64 bg-sage-800 text-white flex flex-col shadow-2xl z-30 transition-all duration-300 relative flex-shrink-0">
+    
+    <!-- Branding Header -->
+    <div class="p-5 text-center border-b border-sage-700/60 bg-sage-900/40">
+      <div class="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-sage-500/30 text-emerald-300 font-black text-2xl mb-2 shadow-inner border border-sage-500/20">
+        🏢
+      </div>
+      <h1 class="text-2xl font-black tracking-wide text-amber-50">برج توفيق</h1>
+      <p class="text-[11px] font-medium text-sage-200 mt-0.5 tracking-wider uppercase">TAWFIQ TOWER MANAGEMENT</p>
+    </div>
+
+    <!-- Navigation Links -->
+    <nav class="flex-1 px-3 py-4 space-y-1.5 overflow-y-auto">
+      <button onclick="switchTab('dashboard')" id="nav-dashboard" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-bold transition-all text-sage-200 hover:bg-sage-700 hover:text-white">
+        <span class="text-lg">📊</span> لوحة التحكم
+      </button>
+      <button onclick="switchTab('units')" id="nav-units" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all text-sage-200 hover:bg-sage-700 hover:text-white">
+        <span class="text-lg">🏢</span> إدارة الوحدات
+      </button>
+      <button onclick="switchTab('rentals')" id="nav-rentals" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all text-sage-200 hover:bg-sage-700 hover:text-white">
+        <span class="text-lg">💰</span> الإيجارات والتحصيلات
+      </button>
+      <button onclick="switchTab('partners')" id="nav-partners" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all text-sage-200 hover:bg-sage-700 hover:text-white">
+        <span class="text-lg">👥</span> الشركاء الثلاثة
+      </button>
+      <button onclick="switchTab('withdrawals')" id="nav-withdrawals" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all text-sage-200 hover:bg-sage-700 hover:text-white">
+        <span class="text-lg">💸</span> سحوبات الشركاء
+      </button>
+      <button onclick="switchTab('expenses')" id="nav-expenses" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all text-sage-200 hover:bg-sage-700 hover:text-white">
+        <span class="text-lg">🧾</span> المصروفات التشغيلية
+      </button>
+      <button onclick="switchTab('otherIncome')" id="nav-otherIncome" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all text-sage-200 hover:bg-sage-700 hover:text-white">
+        <span class="text-lg">💵</span> الإيرادات الأخرى
+      </button>
+      <button onclick="switchTab('balances')" id="nav-balances" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all text-sage-200 hover:bg-sage-700 hover:text-white">
+        <span class="text-lg">⚖️</span> الأرصدة والحسابات
+      </button>
+      <button onclick="switchTab('profits')" id="nav-profits" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all text-sage-200 hover:bg-sage-700 hover:text-white">
+        <span class="text-lg">📈</span> توزيع الأرباح
+      </button>
+      <button onclick="switchTab('reports')" id="nav-reports" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all text-sage-200 hover:bg-sage-700 hover:text-white">
+        <span class="text-lg">📑</span> التقارير الشهرية
+      </button>
+      <button onclick="switchTab('settings')" id="nav-settings" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all text-sage-200 hover:bg-sage-700 hover:text-white">
+        <span class="text-lg">⚙️</span> إعدادات النظام
+      </button>
+    </nav>
+
+    <!-- Footer Stats / Status -->
+    <div class="p-3.5 border-t border-sage-700/60 bg-sage-900/30 text-xs text-center text-sage-200">
+      <div class="flex items-center justify-center gap-2 mb-1">
+        <span id="syncDot" class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+        <span id="syncStatusText" class="font-medium text-emerald-300">متصل مباشرة بقاعدة البيانات</span>
+      </div>
+      <span class="text-[10px] text-sage-300">نظام برج توفيق المحاسبي © 2026</span>
+    </div>
+  </aside>
+
+  <!-- Main Content Wrapper -->
+  <div class="flex-1 flex flex-col h-screen overflow-hidden min-w-0">
+    
+    <!-- Top Bar Header -->
+    <header class="bg-white/90 backdrop-blur-md shadow-sm border-b border-cream-200 px-6 py-3.5 flex justify-between items-center sticky top-0 z-20 no-print">
+      <div class="flex items-center gap-3">
+        <h2 id="pageTitle" class="text-xl font-black text-sage-800">لوحة التحكم المالية</h2>
+        <span class="text-xs bg-sage-100 text-sage-800 font-bold px-2.5 py-1 rounded-lg border border-sage-200 hidden sm:inline-block">
+          العملة: جنيه مصري
+        </span>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <button onclick="loadAppData()" class="bg-sage-50 text-sage-800 hover:bg-sage-100 border border-sage-200 px-3.5 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-sm">
+          <span class="text-sm">🔄</span> مزامنة البيانات
+        </button>
+        <div class="hidden md:flex items-center gap-2 bg-cream-50 px-3 py-1 rounded-xl border border-cream-200 text-xs">
+          <span class="text-gray-400">التاريخ:</span>
+          <span id="headerCurrentDate" class="font-bold text-sage-800"></span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Dynamic Content Container -->
+    <main class="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 space-y-6">
+
+      <!-- ================= 1. DASHBOARD TAB ================= -->
+      <section id="tab-dashboard" class="space-y-6">
+        
+        <!-- Filter Bar -->
+        <div class="bg-white p-4 rounded-2xl shadow-sm border border-cream-200 flex flex-wrap gap-4 items-center justify-between">
+          <div class="flex items-center gap-2">
+            <span class="text-sm font-bold text-sage-800">الفترة المالية:</span>
+            <select id="dashFilterMonth" onchange="renderDashboardStats()" class="bg-cream-50 border border-cream-300 rounded-xl px-3 py-1.5 text-sm font-semibold text-sage-800 focus:outline-none focus:ring-2 focus:ring-sage-500">
+              <option value="ALL">الكل (تراكمي)</option>
+              <option value="01">يناير</option><option value="02">فبراير</option><option value="03">مارس</option>
+              <option value="04">أبريل</option><option value="05">مايو</option><option value="06">يونيو</option>
+              <option value="07">يوليو</option><option value="08">أغسطس</option><option value="09">سبتمبر</option>
+              <option value="10">أكتوبر</option><option value="11">نوفمبر</option><option value="12">ديسمبر</option>
+            </select>
+            <select id="dashFilterYear" onchange="renderDashboardStats()" class="bg-cream-50 border border-cream-300 rounded-xl px-3 py-1.5 text-sm font-semibold text-sage-800 focus:outline-none focus:ring-2 focus:ring-sage-500">
+              <option value="2026" selected>2026</option>
+              <option value="2025">2025</option>
+            </select>
+          </div>
+          <span class="text-xs text-gray-500 font-medium">* البيانات محدثة بشكل لحظي وتفاعلي</span>
+        </div>
+
+        <!-- 10 Metric Cards Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+          
+          <div class="bg-white p-4 rounded-2xl shadow-sm border border-cream-200 relative overflow-hidden">
+            <p class="text-xs font-semibold text-gray-500">1. إيرادات الإيجارات</p>
+            <h3 id="dash-rent-revenue" class="text-xl font-black text-sage-800 mt-2">0 ج.م</h3>
+            <span class="text-[10px] text-emerald-600 font-bold block mt-1">المحصل فعلياً</span>
+          </div>
+
+          <div class="bg-white p-4 rounded-2xl shadow-sm border border-cream-200 relative overflow-hidden">
+            <p class="text-xs font-semibold text-gray-500">2. الإيرادات الأخرى</p>
+            <h3 id="dash-other-income" class="text-xl font-black text-emerald-700 mt-2">0 ج.م</h3>
+            <span class="text-[10px] text-gray-400 block mt-1">خدمات وتعويضات</span>
+          </div>
+
+          <div class="bg-white p-4 rounded-2xl shadow-sm border border-cream-200 relative overflow-hidden">
+            <p class="text-xs font-semibold text-gray-500">3. المصروفات التشغيلية</p>
+            <h3 id="dash-expenses" class="text-xl font-black text-rose-600 mt-2">0 ج.م</h3>
+            <span class="text-[10px] text-rose-500 block mt-1">صيانة وتشغيل البرج</span>
+          </div>
+
+          <div class="bg-white p-4 rounded-2xl shadow-sm border border-cream-200 relative overflow-hidden">
+            <p class="text-xs font-semibold text-gray-500">4. صافي دخل البرج</p>
+            <h3 id="dash-net-income" class="text-xl font-black text-sage-800 mt-2">0 ج.م</h3>
+            <span class="text-[10px] text-emerald-600 block mt-1">قبل سحوبات الشركاء</span>
+          </div>
+
+          <div class="bg-white p-4 rounded-2xl shadow-sm border border-cream-200 relative overflow-hidden">
+            <p class="text-xs font-semibold text-gray-500">5. سحوبات الشركاء</p>
+            <h3 id="dash-withdrawals" class="text-xl font-black text-amber-700 mt-2">0 ج.م</h3>
+            <span class="text-[10px] text-amber-600 block mt-1">مسحوبة كدفعات مقدمة</span>
+          </div>
+
+          <div class="bg-white p-4 rounded-2xl shadow-sm border border-cream-200 relative overflow-hidden">
+            <p class="text-xs font-semibold text-gray-500">6. الرصيد النقدي بالحساب</p>
+            <h3 id="dash-cash-balance" class="text-xl font-black text-sage-700 mt-2">0 ج.م</h3>
+            <span class="text-[10px] text-sage-800 font-bold block mt-1">الرصيد المتوفر للتحويل</span>
+          </div>
+
+          <div class="bg-white p-4 rounded-2xl shadow-sm border border-cream-200 relative overflow-hidden">
+            <p class="text-xs font-semibold text-gray-500">7. الإيجارات المستحقة</p>
+            <h3 id="dash-due-rent" class="text-xl font-black text-gray-800 mt-2">0 ج.م</h3>
+            <span class="text-[10px] text-gray-400 block mt-1">المطلوبة لهذا الشهر</span>
+          </div>
+
+          <div class="bg-white p-4 rounded-2xl shadow-sm border border-cream-200 relative overflow-hidden">
+            <p class="text-xs font-semibold text-gray-500">8. المتأخرات المتبقية</p>
+            <h3 id="dash-pending-rent" class="text-xl font-black text-rose-700 mt-2">0 ج.م</h3>
+            <span class="text-[10px] text-rose-600 font-bold block mt-1">غير محصلة حتى الآن</span>
+          </div>
+
+          <div class="bg-white p-4 rounded-2xl shadow-sm border border-cream-200 relative overflow-hidden">
+            <p class="text-xs font-semibold text-gray-500">9. الوحدات المؤجرة</p>
+            <h3 id="dash-occupied-units" class="text-xl font-black text-emerald-700 mt-2">0 وحدة</h3>
+            <span class="text-[10px] text-emerald-600 block mt-1">عقود نشطة</span>
+          </div>
+
+          <div class="bg-white p-4 rounded-2xl shadow-sm border border-cream-200 relative overflow-hidden">
+            <p class="text-xs font-semibold text-gray-500">10. الوحدات الشاغرة</p>
+            <h3 id="dash-vacant-units" class="text-xl font-black text-gray-500 mt-2">0 وحدة</h3>
+            <span class="text-[10px] text-gray-400 block mt-1">جاهزة للإيجار</span>
+          </div>
+
+        </div>
+
+        <!-- Charts Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div class="bg-white p-5 rounded-2xl shadow-sm border border-cream-200 space-y-3">
+            <h3 class="font-bold text-base text-sage-800 flex items-center justify-between">
+              <span>📈 مقارنة الإيرادات والمصروفات شهرياً</span>
+            </h3>
+            <div class="h-64 relative">
+              <canvas id="chartRevenueExpense"></canvas>
+            </div>
+          </div>
+
+          <div class="bg-white p-5 rounded-2xl shadow-sm border border-cream-200 space-y-3">
+            <h3 class="font-bold text-base text-sage-800 flex items-center justify-between">
+              <span>🍩 توزيع المصروفات حسب التصنيف</span>
+            </h3>
+            <div class="h-64 relative flex items-center justify-center">
+              <canvas id="chartExpensesPie"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent Activity Feed -->
+        <div class="bg-white p-5 rounded-2xl shadow-sm border border-cream-200 space-y-4">
+          <h3 class="font-bold text-base text-sage-800">⏱️ سجل آخر العمليات المالية والتحصيلات</h3>
+          <div class="overflow-x-auto">
+            <table class="w-full text-right text-xs">
+              <thead class="bg-sage-50 text-sage-800 border-b border-sage-100">
+                <tr>
+                  <th class="p-3">النوع</th>
+                  <th class="p-3">التفاصيل / البيان</th>
+                  <th class="p-3">المبلغ</th>
+                  <th class="p-3">التاريخ</th>
+                  <th class="p-3">طريقة الدفع</th>
+                </tr>
+              </thead>
+              <tbody id="recentActivityBody" class="divide-y divide-cream-100 font-medium">
+                <!-- Dynamic Content -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- ================= 2. UNITS MANAGEMENT TAB ================= -->
+      <section id="tab-units" class="space-y-6 hidden">
+        <div class="flex flex-wrap justify-between items-center gap-4 bg-white p-4 rounded-2xl shadow-sm border border-cream-200">
+          <div>
+            <h3 class="text-lg font-bold text-sage-800">إدارة وحدات وشقق ومخازن البرج</h3>
+            <p class="text-xs text-gray-500">البرج مكون من 6 أدوار ومخازن. يمكنك إضافة وتعديل أي عدد من الوحدات بحرية.</p>
+          </div>
+          <button onclick="openUnitModal()" class="bg-sage-800 hover:bg-sage-900 text-white px-4 py-2 rounded-xl text-xs font-bold transition shadow-sm">
+            + إضافة وحدة جديدة
+          </button>
+        </div>
+
+        <!-- Filter & Search -->
+        <div class="flex gap-3">
+          <input type="text" id="unitSearchInput" oninput="renderUnits()" placeholder="🔍 بحث بالرقم أو اسم المستأجر..." class="bg-white border border-cream-300 rounded-xl px-4 py-2 text-xs w-full max-w-xs focus:outline-none focus:ring-2 focus:ring-sage-500">
+        </div>
+
+        <!-- Units Table -->
+        <div class="bg-white rounded-2xl shadow-sm border border-cream-200 overflow-hidden">
+          <div class="overflow-x-auto">
+            <table class="w-full text-right text-xs">
+              <thead class="bg-sage-50 text-sage-800 border-b border-sage-100 font-bold">
+                <tr>
+                  <th class="p-3">رقم الوحدة</th>
+                  <th class="p-3">النوع</th>
+                  <th class="p-3">الدور</th>
+                  <th class="p-3">اسم المستأجر</th>
+                  <th class="p-3">رقم الهاتف</th>
+                  <th class="p-3">الإيجار الشهري</th>
+                  <th class="p-3">الحالة</th>
+                  <th class="p-3 text-center">الإجراءات</th>
+                </tr>
+              </thead>
+              <tbody id="unitsTableBody" class="divide-y divide-cream-100">
+                <!-- Dynamic Units -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= 3. RENTALS & COLLECTIONS TAB ================= -->
+      <section id="tab-rentals" class="space-y-6 hidden">
+        <div class="flex flex-wrap justify-between items-center gap-4 bg-white p-4 rounded-2xl shadow-sm border border-cream-200">
+          <div>
+            <h3 class="text-lg font-bold text-sage-800">إدارة الإيجارات والتحصيلات الشهرية</h3>
+            <p class="text-xs text-gray-500">متابعة المستحقات والتحصيل الفعلي والدفع الجزئي ومتأخرات المستأجرين.</p>
+          </div>
+          <button onclick="openRentalModal()" class="bg-sage-800 hover:bg-sage-900 text-white px-4 py-2 rounded-xl text-xs font-bold transition shadow-sm">
+            + تسجيل دفعة إيجار
+          </button>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-sm border border-cream-200 overflow-hidden">
+          <div class="overflow-x-auto">
+            <table class="w-full text-right text-xs">
+              <thead class="bg-sage-50 text-sage-800 border-b border-sage-100 font-bold">
+                <tr>
+                  <th class="p-3">الوحدة</th>
+                  <th class="p-3">المستأجر</th>
+                  <th class="p-3">الشهر/السنة</th>
+                  <th class="p-3">المبلغ المستحق</th>
+                  <th class="p-3">المبلغ المدفوع</th>
+                  <th class="p-3">المتبقي</th>
+                  <th class="p-3">تاريخ الدفع</th>
+                  <th class="p-3">طريقة الدفع</th>
+                  <th class="p-3">حالة الدفع</th>
+                  <th class="p-3 text-center">الإجراءات</th>
+                </tr>
+              </thead>
+              <tbody id="rentalsTableBody" class="divide-y divide-cream-100">
+                <!-- Dynamic Rentals -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= 4. PARTNERS MANAGEMENT TAB ================= -->
+      <section id="tab-partners" class="space-y-6 hidden">
+        <div class="flex flex-wrap justify-between items-center gap-4 bg-white p-4 rounded-2xl shadow-sm border border-cream-200">
+          <div>
+            <h3 class="text-lg font-bold text-sage-800">إدارة الشركاء الثلاثة ونسب الملكية</h3>
+            <p class="text-xs text-gray-500">مجموع نسب الملكية يجب أن يساوي 100% لضمان التوزيع الصحيح للأرباح.</p>
+          </div>
+          <div class="flex items-center gap-3">
+            <span id="partnerPercentageBadge" class="text-xs font-bold px-3 py-1.5 rounded-xl border"></span>
+            <button onclick="openPartnerModal()" class="bg-sage-800 hover:bg-sage-900 text-white px-4 py-2 rounded-xl text-xs font-bold transition shadow-sm">
+              + إضافة شريك
+            </button>
+          </div>
+        </div>
+
+        <!-- Partners Cards Grid -->
+        <div id="partnersCardsContainer" class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <!-- Dynamic Partner Cards -->
+        </div>
+      </section>
+
+      <!-- ================= 5. PARTNER WITHDRAWALS TAB ================= -->
+      <section id="tab-withdrawals" class="space-y-6 hidden">
+        <div class="flex flex-wrap justify-between items-center gap-4 bg-white p-4 rounded-2xl shadow-sm border border-cream-200">
+          <div>
+            <h3 class="text-lg font-bold text-sage-800">سحوبات الشركاء (حركات مستقلة)</h3>
+            <p class="text-xs text-gray-500">تنويه محاسبي: سحوبات الشركاء ليست من مصروفات تشغيل البرج ولا تُخصم مرتين.</p>
+          </div>
+          <button onclick="openWithdrawalModal()" class="bg-sage-800 hover:bg-sage-900 text-white px-4 py-2 rounded-xl text-xs font-bold transition shadow-sm">
+            + تسجيل عملية سحب
+          </button>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-sm border border-cream-200 overflow-hidden">
+          <div class="overflow-x-auto">
+            <table class="w-full text-right text-xs">
+              <thead class="bg-sage-50 text-sage-800 border-b border-sage-100 font-bold">
+                <tr>
+                  <th class="p-3">اسم الشريك</th>
+                  <th class="p-3">المبلغ المسحوب</th>
+                  <th class="p-3">التاريخ</th>
+                  <th class="p-3">الشهر المالي</th>
+                  <th class="p-3">التصنيف</th>
+                  <th class="p-3">السبب / البيان</th>
+                  <th class="p-3">طريقة الصرف</th>
+                  <th class="p-3 text-center">الإجراءات</th>
+                </tr>
+              </thead>
+              <tbody id="withdrawalsTableBody" class="divide-y divide-cream-100">
+                <!-- Dynamic Withdrawals -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= 6. OPERATING EXPENSES TAB ================= -->
+      <section id="tab-expenses" class="space-y-6 hidden">
+        <div class="flex flex-wrap justify-between items-center gap-4 bg-white p-4 rounded-2xl shadow-sm border border-cream-200">
+          <div>
+            <h3 class="text-lg font-bold text-sage-800">إدارة المصروفات التشغيلية للبرج</h3>
+            <p class="text-xs text-gray-500">صيانة، كهرباء، مياه، نظافة، حراسة، إصلاحات، ضرائب ومصروفات إدارية.</p>
+          </div>
+          <button onclick="openExpenseModal()" class="bg-sage-800 hover:bg-sage-900 text-white px-4 py-2 rounded-xl text-xs font-bold transition shadow-sm">
+            + تسجيل مصروف جديد
+          </button>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-sm border border-cream-200 overflow-hidden">
+          <div class="overflow-x-auto">
+            <table class="w-full text-right text-xs">
+              <thead class="bg-sage-50 text-sage-800 border-b border-sage-100 font-bold">
+                <tr>
+                  <th class="p-3">تصنيف المصروف</th>
+                  <th class="p-3">البيان / الوصف</th>
+                  <th class="p-3">المبلغ</th>
+                  <th class="p-3">التاريخ</th>
+                  <th class="p-3">الشهر المالي</th>
+                  <th class="p-3">الجهة المستفيدة</th>
+                  <th class="p-3">طريقة الدفع</th>
+                  <th class="p-3 text-center">الإجراءات</th>
+                </tr>
+              </thead>
+              <tbody id="expensesTableBody" class="divide-y divide-cream-100">
+                <!-- Dynamic Expenses -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= 7. OTHER INCOME TAB ================= -->
+      <section id="tab-otherIncome" class="space-y-6 hidden">
+        <div class="flex flex-wrap justify-between items-center gap-4 bg-white p-4 rounded-2xl shadow-sm border border-cream-200">
+          <div>
+            <h3 class="text-lg font-bold text-sage-800">الإيرادات غير الإيجارية</h3>
+            <p class="text-xs text-gray-500">إيرادات الخدمات، التعويضات، رسوم الخدمات أو أي إيرادات متنوعة أخرى.</p>
+          </div>
+          <button onclick="openOtherIncomeModal()" class="bg-sage-800 hover:bg-sage-900 text-white px-4 py-2 rounded-xl text-xs font-bold transition shadow-sm">
+            + إضافة إيراد آخر
+          </button>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-sm border border-cream-200 overflow-hidden">
+          <div class="overflow-x-auto">
+            <table class="w-full text-right text-xs">
+              <thead class="bg-sage-50 text-sage-800 border-b border-sage-100 font-bold">
+                <tr>
+                  <th class="p-3">البيان / الوصف</th>
+                  <th class="p-3">المبلغ</th>
+                  <th class="p-3">التاريخ</th>
+                  <th class="p-3">التصنيف</th>
+                  <th class="p-3">طريقة التحصيل</th>
+                  <th class="p-3 text-center">الإجراءات</th>
+                </tr>
+              </thead>
+              <tbody id="otherIncomeTableBody" class="divide-y divide-cream-100">
+                <!-- Dynamic Other Income -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= 8. CASH & BALANCES TAB ================= -->
+      <section id="tab-balances" class="space-y-6 hidden">
+        <div class="bg-white p-6 rounded-2xl shadow-sm border border-cream-200 space-y-6">
+          <h3 class="text-lg font-bold text-sage-800">حركة الأموال والتفريق بين الأرباح والرصيد النقدي</h3>
+          
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="p-5 bg-emerald-50 rounded-2xl border border-emerald-200 space-y-2">
+              <span class="text-xs font-bold text-emerald-800">إجمالي المقبوضات النقدية الفعلية</span>
+              <h4 id="bal-total-in" class="text-2xl font-black text-emerald-800">0 ج.م</h4>
+              <p class="text-[10px] text-emerald-600">إيجارات محصلة + إيرادات أخرى</p>
+            </div>
+
+            <div class="p-5 bg-rose-50 rounded-2xl border border-rose-200 space-y-2">
+              <span class="text-xs font-bold text-rose-800">إجمالي المدفوعات والسحوبات النقدية</span>
+              <h4 id="bal-total-out" class="text-2xl font-black text-rose-700">0 ج.م</h4>
+              <p class="text-[10px] text-rose-600">مصروفات تشغيلية + سحوبات الشركاء</p>
+            </div>
+
+            <div class="p-5 bg-sage-100 rounded-2xl border border-sage-300 space-y-2">
+              <span class="text-xs font-bold text-sage-900">الرصيد النقدي المتبقي بالحساب</span>
+              <h4 id="bal-net-cash" class="text-2xl font-black text-sage-900">0 ج.م</h4>
+              <p class="text-[10px] text-sage-700">السيولة المتاحة حالياً في الخزنة/البنك</p>
+            </div>
+          </div>
+
+          <div class="bg-amber-50 p-4 rounded-xl border border-amber-200 text-xs text-amber-900 space-y-1">
+            <p class="font-bold">⚠️ قاعدة محاسبية هامة:</p>
+            <p>الرصيد النقدي المتاح ليس هو نفسه صافي الربح. صافي الربح هو حق الشركاء المحسوب من (الإيرادات المعترف بها - المصروفات التشغيلية)، بينما الرصيد النقدي يمثل الأموال الحقيقية المتوفرة في الخزنة بعد خصم كافة التدفقات الخارجة بما فيها سحوبات الشركاء.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= 9. PROFIT DISTRIBUTION TAB ================= -->
+      <section id="tab-profits" class="space-y-6 hidden">
+        <div class="bg-white p-6 rounded-2xl shadow-sm border border-cream-200 space-y-6">
+          <div class="flex flex-wrap justify-between items-center gap-4">
+            <div>
+              <h3 class="text-lg font-bold text-sage-800">حساب وتوزيع الأرباح الشهرية على الشركاء</h3>
+              <p class="text-xs text-gray-500">صافي الربح = إيرادات الفترة - مصروفات التشغيل (بدون خصم السحوبات مرتين).</p>
+            </div>
+            
+            <div class="flex items-center gap-3">
+              <select id="profitMonth" class="bg-cream-50 border border-cream-300 rounded-xl px-3 py-2 text-xs font-bold text-sage-800">
+                <option value="01">يناير</option><option value="02">فبراير</option><option value="03">مارس</option>
+                <option value="04">أبريل</option><option value="05">مايو</option><option value="06">يونيو</option>
+                <option value="07">يوليو</option><option value="08">أغسطس</option><option value="09">سبتمبر</option>
+                <option value="10">أكتوبر</option><option value="11">نوفمبر</option><option value="12" selected>ديسمبر</option>
+              </select>
+              <select id="profitYear" class="bg-cream-50 border border-cream-300 rounded-xl px-3 py-2 text-xs font-bold text-sage-800">
+                <option value="2026" selected>2026</option>
+              </select>
+              <button onclick="calculateProfits()" class="bg-sage-800 hover:bg-sage-900 text-white px-4 py-2 rounded-xl text-xs font-bold transition shadow-sm">
+                حساب الأرباح
+              </button>
+            </div>
+          </div>
+
+          <div id="profitCalculationResults" class="space-y-6">
+            <!-- Dynamic Computed Results -->
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= 10. MONTHLY REPORTS TAB ================= -->
+      <section id="tab-reports" class="space-y-6 hidden">
+        <div class="bg-white p-6 rounded-2xl shadow-sm border border-cream-200 space-y-6 no-print">
+          <div class="flex flex-wrap justify-between items-center gap-4">
+            <div>
+              <h3 class="text-lg font-bold text-sage-800">التقارير الشهرية الشاملة لبرج توفيق</h3>
+              <p class="text-xs text-gray-500">إنشاء تقرير مالي كامل للطباعة أو التصدير بصيغة CSV.</p>
+            </div>
+            
+            <div class="flex items-center gap-3">
+              <select id="reportMonth" class="bg-cream-50 border border-cream-300 rounded-xl px-3 py-2 text-xs font-bold text-sage-800">
+                <option value="01">يناير</option><option value="02">فبراير</option><option value="03">مارس</option>
+                <option value="04">أبريل</option><option value="05">مايو</option><option value="06">يونيو</option>
+                <option value="07">يوليو</option><option value="08">أغسطس</option><option value="09">سبتمبر</option>
+                <option value="10">أكتوبر</option><option value="11">نوفمبر</option><option value="12" selected>ديسمبر</option>
+              </select>
+              <select id="reportYear" class="bg-cream-50 border border-cream-300 rounded-xl px-3 py-2 text-xs font-bold text-sage-800">
+                <option value="2026" selected>2026</option>
+              </select>
+              <button onclick="generateMonthlyReport()" class="bg-sage-800 hover:bg-sage-900 text-white px-4 py-2 rounded-xl text-xs font-bold transition shadow-sm">
+                إنشاء التقرير
+              </button>
+              <button onclick="window.print()" class="bg-gray-800 hover:bg-gray-900 text-white px-4 py-2 rounded-xl text-xs font-bold transition shadow-sm">
+                🖨️ طباعة
+              </button>
+              <button onclick="exportReportCSV()" class="bg-emerald-700 hover:bg-emerald-800 text-white px-4 py-2 rounded-xl text-xs font-bold transition shadow-sm">
+                📥 تصدير CSV
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Printable Report Sheet -->
+        <div id="printableReportContainer" class="bg-white p-8 rounded-2xl shadow-sm border border-cream-200 space-y-6 print-area">
+          <div class="text-center border-b pb-4">
+            <h1 class="text-2xl font-black text-sage-800">برج توفيق — Tawfiq Tower</h1>
+            <p class="text-sm font-bold text-gray-600 mt-1" id="reportHeaderPeriod">التقرير المالي لشهر ديسمبر 2026</p>
+          </div>
+
+          <div id="reportDynamicContent" class="space-y-6">
+            <!-- Dynamic Sections for General Summary, Units, Expenses & Partner Shares -->
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= 11. SYSTEM SETTINGS TAB ================= -->
+      <section id="tab-settings" class="space-y-6 hidden">
+        <div class="bg-white p-6 rounded-2xl shadow-sm border border-cream-200 space-y-6 max-w-3xl">
+          <h3 class="text-lg font-bold text-sage-800">إعدادات اتصال النظام وقاعدة البيانات</h3>
+          
+          <div class="space-y-4">
+            <div>
+              <label class="block text-xs font-bold text-sage-800 mb-1">رابط Google Apps Script Web App API:</label>
+              <input type="text" id="settingScriptUrl" class="w-full p-3 border border-cream-300 rounded-xl text-xs font-mono text-sage-900 focus:outline-none focus:ring-2 focus:ring-sage-500" dir="ltr">
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-xs font-bold text-sage-800 mb-1">اسم المبنى / البرج:</label>
+                <input type="text" value="برج توفيق" class="w-full p-3 border border-cream-300 rounded-xl text-xs font-bold text-sage-900 bg-cream-50" readonly>
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-sage-800 mb-1">العملة المعتمدة:</label>
+                <input type="text" value="جنيه مصري (EGP)" class="w-full p-3 border border-cream-300 rounded-xl text-xs font-bold text-sage-900 bg-cream-50" readonly>
+              </div>
+            </div>
+
+            <div class="pt-4 flex gap-3">
+              <button onclick="saveSettings()" class="bg-sage-800 hover:bg-sage-900 text-white px-6 py-2.5 rounded-xl text-xs font-bold transition">
+                حفظ الإعدادات
+              </button>
+              <button onclick="testApiConnection()" class="bg-sage-100 text-sage-800 hover:bg-sage-200 px-6 py-2.5 rounded-xl text-xs font-bold transition">
+                اختبار الاتصال بالقاعدة
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- ================= UNIVERSAL MODAL CONTAINER ================= -->
+  <div id="appModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm hidden items-center justify-center z-50 p-4 no-print">
+    <div class="bg-white w-full max-w-lg rounded-2xl p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
+      <div class="flex justify-between items-center border-b pb-3">
+        <h3 id="modalTitle" class="font-bold text-base text-sage-800">عنوان النموذج</h3>
+        <button onclick="closeModal()" class="text-gray-400 hover:text-gray-700 font-bold text-lg">✕</button>
+      </div>
+      <div id="modalBody" class="space-y-4">
+        <!-- Dynamic Form Controls -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= APPLICATION JAVASCRIPT LOGIC ================= -->
+  <script>
+    // Config & Primary URL
+    let API_URL = localStorage.getItem("tawfiq_api_url") || "https://script.google.com/macros/s/AKfycbwGbTqlPUL-yK-xH_vtQtblOXTFC5APxT4T31fPDWWBuwLdXKiNIn3o8D3rYyGtWo7N/exec";
+    
+    // In-memory reactive state
+    let appData = {
+      Units: [],
+      RentPayments: [],
+      Partners: [],
+      Withdrawals: [],
+      Expenses: [],
+      OtherIncome: []
+    };
+
+    // Chart References
+    let chartRevExpInstance = null;
+    let chartPieInstance = null;
+
+    // Initialization
+    window.onload = function() {
+      document.getElementById("settingScriptUrl").value = API_URL;
+      document.getElementById("headerCurrentDate").innerText = new Date().toLocaleDateString('ar-EG', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+      
+      // Load initial state
+      loadAppData();
+    };
+
+    // TAB NAVIGATION
+    function switchTab(tabId) {
+      document.querySelectorAll("main > section").forEach(sec => sec.classList.add("hidden"));
+      const targetSec = document.getElementById("tab-" + tabId);
+      if(targetSec) targetSec.classList.remove("hidden");
+
+      document.querySelectorAll(".nav-btn").forEach(btn => {
+        btn.classList.remove("bg-sage-700", "text-white", "font-bold");
+        btn.classList.add("text-sage-200", "font-medium");
+      });
+
+      const activeBtn = document.getElementById("nav-" + tabId);
+      if(activeBtn) {
+        activeBtn.classList.add("bg-sage-700", "text-white", "font-bold");
+        activeBtn.classList.remove("text-sage-200", "font-medium");
+      }
+
+      const titles = {
+        'dashboard': 'لوحة التحكم المالية',
+        'units': 'إدارة وحدات البرج',
+        'rentals': 'الإيجارات والتحصيلات',
+        'partners': 'إدارة الشركاء الثلاثة',
+        'withdrawals': 'سحوبات الشركاء',
+        'expenses': 'المصروفات التشغيلية',
+        'otherIncome': 'الإيرادات الأخرى',
+        'balances': 'الأرصدة والحسابات المالية',
+        'profits': 'حساب وتوزيع الأرباح',
+        'reports': 'التقارير الشهرية',
+        'settings': 'إعدادات النظام'
+      };
+      document.getElementById("pageTitle").innerText = titles[tabId] || 'لوحة التحكم';
+
+      // Auto-render tab-specific actions
+      if(tabId === 'profits') calculateProfits();
+      if(tabId === 'reports') generateMonthlyReport();
+    }
+
+    // FETCH DATA FROM BACKEND API
+    async function loadAppData() {
+      const statusText = document.getElementById("syncStatusText");
+      const statusDot = document.getElementById("syncDot");
+      
+      statusText.innerText = "جاري المزامنـة...";
+      statusDot.className = "w-2.5 h-2.5 rounded-full bg-amber-400 animate-ping";
+
+      try {
+        const response = await fetch(API_URL + "?action=getData");
+        const json = await response.json();
+        
+        if (json.status === "success" && json.data) {
+          appData = json.data;
+          statusText.innerText = "متصل مباشرة بقاعدة البيانات";
+          statusDot.className = "w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse";
+        } else {
+          throw new Error(json.message || "Failed to parse data");
+        }
+      } catch (err) {
+        console.warn("Backend connection fallback. Using localized state.", err);
+        statusText.innerText = "تعذر الاتصال المباشر (وضع العرض المحلي)";
+        statusDot.className = "w-2.5 h-2.5 rounded-full bg-rose-500";
+        
+        // Populate fallback mock dataset if empty
+        if(!appData.Partners || appData.Partners.length === 0) {
+          populateFallbackDemoData();
+        }
+      }
+
+      renderAllComponents();
+    }
+
+    function populateFallbackDemoData() {
+      appData = {
+        Units: [
+          { UnitID: "U1", UnitNo: "شقة 101", Type: "شقة", Floor: "1", TenantName: "أحمد محمود", TenantPhone: "01012345678", MonthlyRent: 3500, Status: "مؤجرة" },
+          { UnitID: "U2", UnitNo: "شقة 102", Type: "شقة", Floor: "1", TenantName: "محمد علي", TenantPhone: "01122334455", MonthlyRent: 3500, Status: "مؤجرة" },
+          { UnitID: "U3", UnitNo: "مخزن 1", Type: "مخزن", Floor: "الأرضي", TenantName: "شركة السلام", TenantPhone: "01200001111", MonthlyRent: 5000, Status: "مؤجرة" },
+          { UnitID: "U4", UnitNo: "شقة 201", Type: "شقة", Floor: "2", TenantName: "", TenantPhone: "", MonthlyRent: 4000, Status: "شاغرة" }
+        ],
+        RentPayments: [
+          { PaymentID: "P1", UnitNo: "شقة 101", TenantName: "أحمد محمود", Month: "12", Year: "2026", AmountDue: 3500, AmountPaid: 3500, AmountRemaining: 0, PaymentDate: "2026-12-05", PaymentMethod: "نقدي" },
+          { PaymentID: "P2", UnitNo: "شقة 102", TenantName: "محمد علي", Month: "12", Year: "2026", AmountDue: 3500, AmountPaid: 2000, AmountRemaining: 1500, PaymentDate: "2026-12-08", PaymentMethod: "تحويل بنكي" }
+        ],
+        Partners: [
+          { PartnerID: "PARTNER_1", Name: "الشريك الأول", Phone: "01000000001", SharePercentage: 50, Notes: "شريك رئيسي" },
+          { PartnerID: "PARTNER_2", Name: "الشريك الثاني", Phone: "01000000002", SharePercentage: 30, Notes: "شريك مساهم" },
+          { PartnerID: "PARTNER_3", Name: "الشريك الثالث", Phone: "01000000003", SharePercentage: 20, Notes: "شريك مساهم" }
+        ],
+        Withdrawals: [
+          { WithdrawalID: "W1", PartnerName: "الشريك الأول", Amount: 1500, Date: "2026-12-10", Month: "12", Reason: "مصروف شخصي", Category: "تحت حساب الأرباح", PaymentMethod: "نقدي" }
+        ],
+        Expenses: [
+          { ExpenseID: "E1", Category: "نظافة", Description: "نظافة السلم والمدخل", Amount: 500, Date: "2026-12-02", Month: "12", Beneficiary: "عامل النظافة", PaymentMethod: "نقدي" },
+          { ExpenseID: "E2", Category: "كهرباء", Description: "فاتورة كهرباء الخدمات", Amount: 800, Date: "2026-12-12", Month: "12", Beneficiary: "شركة الكهرباء", PaymentMethod: "نقدي" }
+        ],
+        OtherIncome: [
+          { IncomeID: "I1", Description: "إيراد إعلانات الواجهة", Amount: 1200, Date: "2026-12-01", Category: "إيرادات متنوعة", PaymentMethod: "نقدي" }
+        ]
+      };
+    }
+
+    // RENDER ALL VIEWS
+    function renderAllComponents() {
+      renderDashboardStats();
+      renderUnits();
+      renderRentals();
+      renderPartners();
+      renderWithdrawals();
+      renderExpenses();
+      renderOtherIncome();
+      renderBalances();
+    }
+
+    // 1. DASHBOARD CALCULATIONS & CHARTS
+    function renderDashboardStats() {
+      const monthFilter = document.getElementById("dashFilterMonth").value;
+      const yearFilter = document.getElementById("dashFilterYear").value;
+
+      const rentPayments = (appData.RentPayments || []).filter(r => (monthFilter === "ALL" || r.Month == monthFilter) && r.Year == yearFilter);
+      const otherIncome = (appData.OtherIncome || []).filter(i => (monthFilter === "ALL" || (i.Date || '').includes(`-${monthFilter}-`)) && (i.Date || '').startsWith(yearFilter));
+      const expenses = (appData.Expenses || []).filter(e => (monthFilter === "ALL" || e.Month == monthFilter) && (e.Date || '').startsWith(yearFilter));
+      const withdrawals = (appData.Withdrawals || []).filter(w => (monthFilter === "ALL" || w.Month == monthFilter) && (w.Date || '').startsWith(yearFilter));
+
+      const totalRentPaid = rentPayments.reduce((s, r) => s + Number(r.AmountPaid || 0), 0);
+      const totalRentDue = rentPayments.reduce((s, r) => s + Number(r.AmountDue || 0), 0);
+      const totalPendingRent = rentPayments.reduce((s, r) => s + Number(r.AmountRemaining || 0), 0);
+      const totalOtherInc = otherIncome.reduce((s, i) => s + Number(i.Amount || 0), 0);
+      const totalExp = expenses.reduce((s, e) => s + Number(e.Amount || 0), 0);
+      const totalWith = withdrawals.reduce((s, w) => s + Number(w.Amount || 0), 0);
+
+      const netIncome = (totalRentPaid + totalOtherInc) - totalExp;
+      const cashBalance = (totalRentPaid + totalOtherInc) - (totalExp + totalWith);
+
+      const units = appData.Units || [];
+      const occupiedUnits = units.filter(u => u.Status === "مؤجرة").length;
+      const vacantUnits = units.filter(u => u.Status === "شاغرة" || !u.TenantName).length;
+
+      // Update DOM Text
+      document.getElementById("dash-rent-revenue").innerText = totalRentPaid.toLocaleString() + " ج.م";
+      document.getElementById("dash-other-income").innerText = totalOtherInc.toLocaleString() + " ج.م";
+      document.getElementById("dash-expenses").innerText = totalExp.toLocaleString() + " ج.م";
+      document.getElementById("dash-net-income").innerText = netIncome.toLocaleString() + " ج.م";
+      document.getElementById("dash-withdrawals").innerText = totalWith.toLocaleString() + " ج.م";
+      document.getElementById("dash-cash-balance").innerText = cashBalance.toLocaleString() + " ج.م";
+      document.getElementById("dash-due-rent").innerText = totalRentDue.toLocaleString() + " ج.م";
+      document.getElementById("dash-pending-rent").innerText = totalPendingRent.toLocaleString() + " ج.م";
+      document.getElementById("dash-occupied-units").innerText = occupiedUnits + " وحدة";
+      document.getElementById("dash-vacant-units").innerText = vacantUnits + " وحدة";
+
+      // Populate Activity Feed
+      const recentBody = document.getElementById("recentActivityBody");
+      recentBody.innerHTML = "";
+      
+      const combined = [
+        ...rentPayments.map(r => ({ type: 'إيجار محصل', desc: `${r.UnitNo} - ${r.TenantName}`, amount: r.AmountPaid, date: r.PaymentDate, method: r.PaymentMethod, color: 'text-emerald-700' })),
+        ...expenses.map(e => ({ type: 'مصروف تشغيل', desc: `${e.Category}: ${e.Description}`, amount: `- ${e.Amount}`, date: e.Date, method: e.PaymentMethod, color: 'text-rose-600' })),
+        ...withdrawals.map(w => ({ type: 'سحب شريك', desc: `${w.PartnerName} (${w.Reason})`, amount: `- ${w.Amount}`, date: w.Date, method: w.PaymentMethod, color: 'text-amber-700' }))
+      ].sort((a,b) => new Date(b.date || 0) - new Date(a.date || 0)).slice(0, 6);
+
+      if(combined.length === 0) {
+        recentBody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-gray-400">لا توجد عمليات مسجلة لهذه الفترة</td></tr>`;
+      } else {
+        combined.forEach(c => {
+          recentBody.innerHTML += `
+            <tr class="hover:bg-sage-50/50 transition">
+              <td class="p-3"><span class="px-2 py-1 rounded-lg text-[10px] font-bold bg-gray-100 text-gray-800">${c.type}</span></td>
+              <td class="p-3">${c.desc}</td>
+              <td class="p-3 font-bold ${c.color}">${c.amount} ج.م</td>
+              <td class="p-3 text-gray-500">${c.date || '-'}</td>
+              <td class="p-3 text-gray-500">${c.method || 'نقدي'}</td>
+            </tr>`;
+        });
+      }
+
+      // Render Dashboard Charts
+      renderCharts(totalRentPaid + totalOtherInc, totalExp, expenses);
+    }
+
+    function renderCharts(totalRevenue, totalExpenses, expensesList) {
+      // 1. Revenue vs Expenses Bar Chart
+      const ctx1 = document.getElementById('chartRevenueExpense').getContext('2d');
+      if (chartRevExpInstance) chartRevExpInstance.destroy();
+      
+      chartRevExpInstance = new Chart(ctx1, {
+        type: 'bar',
+        data: {
+          labels: ['الإيرادات الفردية', 'المصروفات التشغيلية', 'صافي الدخل'],
+          datasets: [{
+            label: 'المبالغ (جنيه مصري)',
+            data: [totalRevenue, totalExpenses, totalRevenue - totalExpenses],
+            backgroundColor: ['#4A6B5B', '#E11D48', '#2F4439'],
+            borderRadius: 12
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } }
+        }
+      });
+
+      // 2. Expenses Category Pie Chart
+      const categories = {};
+      expensesList.forEach(e => {
+        categories[e.Category] = (categories[e.Category] || 0) + Number(e.Amount || 0);
+      });
+
+      const ctx2 = document.getElementById('chartExpensesPie').getContext('2d');
+      if (chartPieInstance) chartPieInstance.destroy();
+
+      chartPieInstance = new Chart(ctx2, {
+        type: 'doughnut',
+        data: {
+          labels: Object.keys(categories).length > 0 ? Object.keys(categories) : ['لا يوجد مصروفات'],
+          datasets: [{
+            data: Object.values(categories).length > 0 ? Object.values(categories) : [1],
+            backgroundColor: ['#2F4439', '#4A6B5B', '#A8BFB0', '#D97706', '#DC2626', '#4B5563']
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false
+        }
+      });
+    }
+
+    // 2. UNITS MANAGEMENT
+    function renderUnits() {
+      const tbody = document.getElementById("unitsTableBody");
+      tbody.innerHTML = "";
+      const search = (document.getElementById("unitSearchInput").value || "").toLowerCase();
+      
+      const units = (appData.Units || []).filter(u => 
+        (u.UnitNo || "").toLowerCase().includes(search) || 
+        (u.TenantName || "").toLowerCase().includes(search)
+      );
+
+      if(units.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="8" class="p-4 text-center text-gray-400">لا توجد وحدات مسجلة مطابقة للبحث</td></tr>`;
+        return;
+      }
+
+      units.forEach(u => {
+        const isOccupied = u.Status === "مؤجرة";
+        tbody.innerHTML += `
+          <tr class="hover:bg-cream-50 transition">
+            <td class="p-3 font-black text-sage-900">${u.UnitNo || ''}</td>
+            <td class="p-3">${u.Type || ''}</td>
+            <td class="p-3">${u.Floor || ''}</td>
+            <td class="p-3 font-semibold">${u.TenantName || '<span class="text-gray-400">شاغرة</span>'}</td>
+            <td class="p-3 text-gray-500">${u.TenantPhone || '-'}</td>
+            <td class="p-3 font-bold text-sage-800">${Number(u.MonthlyRent || 0).toLocaleString()} ج.م</td>
+            <td class="p-3">
+              <span class="px-2.5 py-1 rounded-full text-[10px] font-bold ${isOccupied ? 'bg-emerald-100 text-emerald-800' : 'bg-gray-100 text-gray-600'}">
+                ${u.Status || 'شاغرة'}
+              </span>
+            </td>
+            <td class="p-3 text-center space-x-2 space-x-reverse">
+              <button onclick="deleteRecord('Units', '${u.UnitID}')" class="text-rose-600 hover:text-rose-800 font-bold text-xs">حذف</button>
+            </td>
+          </tr>`;
+      });
+    }
+
+    // 3. RENTALS & COLLECTIONS
+    function renderRentals() {
+      const tbody = document.getElementById("rentalsTableBody");
+      tbody.innerHTML = "";
+      const rentals = appData.RentPayments || [];
+
+      if(rentals.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="10" class="p-4 text-center text-gray-400">لا توجد سجلات إيجارات مدفوعة</td></tr>`;
+        return;
+      }
+
+      rentals.forEach(r => {
+        const remaining = Number(r.AmountRemaining || 0);
+        let badgeClass = "bg-emerald-100 text-emerald-800";
+        let statusLabel = "مدفوع بالكامل";
+
+        if(remaining > 0 && Number(r.AmountPaid || 0) > 0) {
+          badgeClass = "bg-amber-100 text-amber-800";
+          statusLabel = "مدفوع جزئياً";
+        } else if(Number(r.AmountPaid || 0) === 0) {
+          badgeClass = "bg-rose-100 text-rose-800";
+          statusLabel = "غير مدفوع / متأخر";
+        }
+
+        tbody.innerHTML += `
+          <tr class="hover:bg-cream-50 transition">
+            <td class="p-3 font-bold text-sage-900">${r.UnitNo || ''}</td>
+            <td class="p-3">${r.TenantName || ''}</td>
+            <td class="p-3 font-mono">${r.Month}/${r.Year}</td>
+            <td class="p-3 font-bold text-gray-800">${Number(r.AmountDue || 0).toLocaleString()} ج.م</td>
+            <td class="p-3 font-bold text-emerald-700">${Number(r.AmountPaid || 0).toLocaleString()} ج.م</td>
+            <td class="p-3 font-bold text-rose-600">${remaining.toLocaleString()} ج.م</td>
+            <td class="p-3 text-gray-500">${r.PaymentDate || ''}</td>
+            <td class="p-3 text-gray-500">${r.PaymentMethod || 'نقدي'}</td>
+            <td class="p-3"><span class="px-2.5 py-1 rounded-full text-[10px] font-bold ${badgeClass}">${statusLabel}</span></td>
+            <td class="p-3 text-center">
+              <button onclick="deleteRecord('RentPayments', '${r.PaymentID}')" class="text-rose-600 hover:text-rose-800 font-bold text-xs">حذف</button>
+            </td>
+          </tr>`;
+      });
+    }
+
+    // 4. PARTNERS MANAGEMENT
+    function renderPartners() {
+      const container = document.getElementById("partnersCardsContainer");
+      container.innerHTML = "";
+      const partners = appData.Partners || [];
+      const totalPct = partners.reduce((s, p) => s + Number(p.SharePercentage || 0), 0);
+
+      const badge = document.getElementById("partnerPercentageBadge");
+      badge.innerText = `مجموع النسب: ${totalPct}%`;
+      badge.className = totalPct === 100 
+        ? "text-xs font-bold px-3 py-1.5 rounded-xl bg-emerald-100 text-emerald-800 border-emerald-200"
+        : "text-xs font-bold px-3 py-1.5 rounded-xl bg-rose-100 text-rose-800 border-rose-200";
+
+      partners.forEach(p => {
+        const partnerWithdrawals = (appData.Withdrawals || [])
+          .filter(w => w.PartnerName === p.Name)
+          .reduce((s, w) => s + Number(w.Amount || 0), 0);
+
+        container.innerHTML += `
+          <div class="bg-white p-5 rounded-2xl shadow-sm border border-cream-200 space-y-3 relative">
+            <div class="flex justify-between items-center border-b pb-2">
+              <h4 class="text-base font-bold text-sage-900">${p.Name}</h4>
+              <span class="text-xs font-black bg-sage-100 text-sage-800 px-2.5 py-1 rounded-lg">${p.SharePercentage}% من الملكية</span>
+            </div>
+            <p class="text-xs text-gray-600">رقم الهاتف: <span class="font-mono text-sage-900">${p.Phone || 'غير مسجل'}</span></p>
+            <p class="text-xs text-gray-600">إجمالي السحوبات المسجلة: <span class="font-bold text-amber-700">${partnerWithdrawals.toLocaleString()} ج.م</span></p>
+            <p class="text-[11px] text-gray-400">${p.Notes || ''}</p>
+            <div class="pt-2 flex justify-end">
+              <button onclick="deleteRecord('Partners', '${p.PartnerID}')" class="text-rose-600 hover:text-rose-800 text-xs font-bold">حذف الشريك</button>
+            </div>
+          </div>`;
+      });
+    }
+
+    // 5. WITHDRAWALS
+    function renderWithdrawals() {
+      const tbody = document.getElementById("withdrawalsTableBody");
+      tbody.innerHTML = "";
+      const withdrawals = appData.Withdrawals || [];
+
+      if(withdrawals.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="8" class="p-4 text-center text-gray-400">لا توجد عمليات سحب شريكة مسجلة</td></tr>`;
+        return;
+      }
+
+      withdrawals.forEach(w => {
+        tbody.innerHTML += `
+          <tr class="hover:bg-cream-50 transition">
+            <td class="p-3 font-bold text-sage-900">${w.PartnerName || ''}</td>
+            <td class="p-3 font-bold text-amber-700">${Number(w.Amount || 0).toLocaleString()} ج.م</td>
+            <td class="p-3 text-gray-500">${w.Date || ''}</td>
+            <td class="p-3 font-mono">${w.Month || ''}</td>
+            <td class="p-3"><span class="px-2 py-0.5 bg-amber-50 text-amber-800 rounded font-semibold text-[10px]">${w.Category || 'دفعة تحت حساب الأرباح'}</span></td>
+            <td class="p-3">${w.Reason || '-'}</td>
+            <td class="p-3 text-gray-500">${w.PaymentMethod || 'نقدي'}</td>
+            <td class="p-3 text-center">
+              <button onclick="deleteRecord('Withdrawals', '${w.WithdrawalID}')" class="text-rose-600 hover:text-rose-800 font-bold text-xs">حذف</button>
+            </td>
+          </tr>`;
+      });
+    }
+
+    // 6. EXPENSES
+    function renderExpenses() {
+      const tbody = document.getElementById("expensesTableBody");
+      tbody.innerHTML = "";
+      const expenses = appData.Expenses || [];
+
+      if(expenses.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="8" class="p-4 text-center text-gray-400">لا توجد مصروفات تشغيلية مسجلة</td></tr>`;
+        return;
+      }
+
+      expenses.forEach(e => {
+        tbody.innerHTML += `
+          <tr class="hover:bg-cream-50 transition">
+            <td class="p-3 font-bold text-sage-800">${e.Category || ''}</td>
+            <td class="p-3">${e.Description || ''}</td>
+            <td class="p-3 font-bold text-rose-600">${Number(e.Amount || 0).toLocaleString()} ج.م</td>
+            <td class="p-3 text-gray-500">${e.Date || ''}</td>
+            <td class="p-3 font-mono">${e.Month || ''}</td>
+            <td class="p-3 text-gray-600">${e.Beneficiary || '-'}</td>
+            <td class="p-3 text-gray-500">${e.PaymentMethod || 'نقدي'}</td>
+            <td class="p-3 text-center">
+              <button onclick="deleteRecord('Expenses', '${e.ExpenseID}')" class="text-rose-600 hover:text-rose-800 font-bold text-xs">حذف</button>
+            </td>
+          </tr>`;
+      });
+    }
+
+    // 7. OTHER INCOME
+    function renderOtherIncome() {
+      const tbody = document.getElementById("otherIncomeTableBody");
+      tbody.innerHTML = "";
+      const income = appData.OtherIncome || [];
+
+      if(income.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-gray-400">لا توجد إيرادات أخرى مسجلة</td></tr>`;
+        return;
+      }
+
+      income.forEach(i => {
+        tbody.innerHTML += `
+          <tr class="hover:bg-cream-50 transition">
+            <td class="p-3 font-bold text-sage-900">${i.Description || ''}</td>
+            <td class="p-3 font-bold text-emerald-700">${Number(i.Amount || 0).toLocaleString()} ج.م</td>
+            <td class="p-3 text-gray-500">${i.Date || ''}</td>
+            <td class="p-3">${i.Category || 'إيرادات متنوعة'}</td>
+            <td class="p-3 text-gray-500">${i.PaymentMethod || 'نقدي'}</td>
+            <td class="p-3 text-center">
+              <button onclick="deleteRecord('OtherIncome', '${i.IncomeID}')" class="text-rose-600 hover:text-rose-800 font-bold text-xs">حذف</button>
+            </td>
+          </tr>`;
+      });
+    }
+
+    // 8. BALANCES
+    function renderBalances() {
+      const rentPayments = appData.RentPayments || [];
+      const otherInc = appData.OtherIncome || [];
+      const totalIn = rentPayments.reduce((s, r) => s + Number(r.AmountPaid || 0), 0) + otherInc.reduce((s, i) => s + Number(i.Amount || 0), 0);
+
+      const expenses = appData.Expenses || [];
+      const withdrawals = appData.Withdrawals || [];
+      const totalOut = expenses.reduce((s, e) => s + Number(e.Amount || 0), 0) + withdrawals.reduce((s, w) => s + Number(w.Amount || 0), 0);
+
+      document.getElementById("bal-total-in").innerText = totalIn.toLocaleString() + " ج.م";
+      document.getElementById("bal-total-out").innerText = totalOut.toLocaleString() + " ج.م";
+      document.getElementById("bal-net-cash").innerText = (totalIn - totalOut).toLocaleString() + " ج.م";
+    }
+
+    // 9. PROFIT CALCULATION & ALLOCATION
+    function calculateProfits() {
+      const month = document.getElementById("profitMonth").value;
+      const year = document.getElementById("profitYear").value;
+
+      const rentPayments = (appData.RentPayments || []).filter(r => r.Month == month && r.Year == year);
+      const otherIncome = (appData.OtherIncome || []).filter(i => (i.Date || '').startsWith(`${year}-${month}`));
+      const expenses = (appData.Expenses || []).filter(e => e.Month == month && (e.Date || '').startsWith(year));
+
+      const totalRev = rentPayments.reduce((s, r) => s + Number(r.AmountPaid || 0), 0) + otherIncome.reduce((s, i) => s + Number(i.Amount || 0), 0);
+      const totalExp = expenses.reduce((s, e) => s + Number(e.Amount || 0), 0);
+      const netProfit = totalRev - totalExp;
+
+      const container = document.getElementById("profitCalculationResults");
+      
+      let html = `
+        <div class="p-4 bg-sage-50 rounded-2xl border border-sage-200 grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div><p class="text-xs text-gray-500">إجمالي إيرادات الفترة:</p><h4 class="text-lg font-bold text-sage-900">${totalRev.toLocaleString()} ج.م</h4></div>
+          <div><p class="text-xs text-gray-500">إجمالي مصروفات الفترة:</p><h4 class="text-lg font-bold text-rose-600">${totalExp.toLocaleString()} ج.m</h4></div>
+          <div><p class="text-xs text-gray-500">صافي الربح القابل للتوزيع:</p><h4 class="text-lg font-black ${netProfit >= 0 ? 'text-emerald-700' : 'text-rose-700'}">${netProfit.toLocaleString()} ج.م</h4></div>
+        </div>
+
+        <h4 class="font-bold text-sm text-sage-800">توزيع الصافي على الشركاء لهذا الشهر:</h4>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">`;
+
+      const partners = appData.Partners || [];
+      partners.forEach(p => {
+        const sharePct = Number(p.SharePercentage || 0);
+        const partnerShareAmount = netProfit > 0 ? (netProfit * (sharePct / 100)) : 0;
+        
+        // Month withdrawals for this partner
+        const monthWithdrawals = (appData.Withdrawals || [])
+          .filter(w => w.PartnerName === p.Name && w.Month == month)
+          .reduce((s, w) => s + Number(w.Amount || 0), 0);
+
+        const remainingDue = partnerShareAmount - monthWithdrawals;
+
+        html += `
+          <div class="bg-white p-4 rounded-xl border border-cream-200 space-y-2">
+            <div class="flex justify-between items-center">
+              <span class="font-bold text-sage-900">${p.Name}</span>
+              <span class="text-xs bg-sage-100 text-sage-800 px-2 py-0.5 rounded font-bold">${sharePct}%</span>
+            </div>
+            <p class="text-xs text-gray-600">النصيب المخصص من الأرباح: <b class="text-emerald-700">${partnerShareAmount.toFixed(2)} ج.م</b></p>
+            <p class="text-xs text-gray-600">المبالغ المسحوبة خلال الشهر: <b class="text-amber-700">${monthWithdrawals.toLocaleString()} ج.م</b></p>
+            <div class="pt-2 border-t flex justify-between items-center text-xs">
+              <span class="font-bold text-gray-700">الصافي المستحق للذمة:</span>
+              <span class="font-black ${remainingDue >= 0 ? 'text-emerald-800' : 'text-rose-600'}">${remainingDue.toFixed(2)} ج.م</span>
+            </div>
+          </div>`;
+      });
+
+      html += `</div>`;
+      container.innerHTML = html;
+    }
+
+    // 10. GENERATE MONTHLY REPORT SHEET
+    function generateMonthlyReport() {
+      const month = document.getElementById("reportMonth").value;
+      const year = document.getElementById("reportYear").value;
+
+      document.getElementById("reportHeaderPeriod").innerText = `التقرير المالي التفصيلي لشهر ${month} / ${year}`;
+
+      const rentPayments = (appData.RentPayments || []).filter(r => r.Month == month && r.Year == year);
+      const otherIncome = (appData.OtherIncome || []).filter(i => (i.Date || '').startsWith(`${year}-${month}`));
+      const expenses = (appData.Expenses || []).filter(e => e.Month == month && (e.Date || '').startsWith(year));
+      const withdrawals = (appData.Withdrawals || []).filter(w => w.Month == month && (w.Date || '').startsWith(year));
+
+      const totalRentPaid = rentPayments.reduce((s, r) => s + Number(r.AmountPaid || 0), 0);
+      const totalOtherInc = otherIncome.reduce((s, i) => s + Number(i.Amount || 0), 0);
+      const totalExp = expenses.reduce((s, e) => s + Number(e.Amount || 0), 0);
+      const totalWith = withdrawals.reduce((s, w) => s + Number(w.Amount || 0), 0);
+      const netProfit = (totalRentPaid + totalOtherInc) - totalExp;
+
+      const container = document.getElementById("reportDynamicContent");
+      container.innerHTML = `
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-xs font-bold text-center">
+          <div class="p-3 bg-sage-50 rounded-xl border border-sage-200">إجمالي الإيرادات: ${totalRentPaid + totalOtherInc} ج.م</div>
+          <div class="p-3 bg-rose-50 rounded-xl border border-rose-200">إجمالي المصروفات: ${totalExp} ج.م</div>
+          <div class="p-3 bg-emerald-50 rounded-xl border border-emerald-200">صافي الربح: ${netProfit} ج.م</div>
+          <div class="p-3 bg-amber-50 rounded-xl border border-amber-200">إجمالي السحوبات: ${totalWith} ج.م</div>
+        </div>
+
+        <div class="space-y-2">
+          <h4 class="font-bold text-sm text-sage-900 border-b pb-1">أولاً: تحصيلات إيجارات الوحدات</h4>
+          <table class="w-full text-right text-xs border">
+            <thead class="bg-gray-100 font-bold">
+              <tr><th class="p-2 border">الوحدة</th><th class="p-2 border">المستأجر</th><th class="p-2 border">المستحق</th><th class="p-2 border">المدفوع</th><th class="p-2 border">المتبقي</th></tr>
+            </thead>
+            <tbody>
+              ${rentPayments.length === 0 ? '<tr><td colspan="5" class="p-2 text-center text-gray-400">لا يوجد بيانات للتحصيل</td></tr>' : 
+                rentPayments.map(r => `<tr><td class="p-2 border">${r.UnitNo}</td><td class="p-2 border">${r.TenantName}</td><td class="p-2 border">${r.AmountDue}</td><td class="p-2 border">${r.AmountPaid}</td><td class="p-2 border">${r.AmountRemaining}</td></tr>`).join('')}
+            </tbody>
+          </table>
+        </div>
+
+        <div class="space-y-2">
+          <h4 class="font-bold text-sm text-sage-900 border-b pb-1">ثانياً: المصروفات التشغيلية</h4>
+          <table class="w-full text-right text-xs border">
+            <thead class="bg-gray-100 font-bold">
+              <tr><th class="p-2 border">التصنيف</th><th class="p-2 border">البيان</th><th class="p-2 border">المبلغ</th><th class="p-2 border">التاريخ</th></tr>
+            </thead>
+            <tbody>
+              ${expenses.length === 0 ? '<tr><td colspan="4" class="p-2 text-center text-gray-400">لا يوجد مصروفات لهذا الشهر</td></tr>' : 
+                expenses.map(e => `<tr><td class="p-2 border">${e.Category}</td><td class="p-2 border">${e.Description}</td><td class="p-2 border">${e.Amount}</td><td class="p-2 border">${e.Date}</td></tr>`).join('')}
+            </tbody>
+          </table>
+        </div>`;
+    }
+
+    // CSV EXPORT LOGIC
+    function exportReportCSV() {
+      const month = document.getElementById("reportMonth").value;
+      const year = document.getElementById("reportYear").value;
+      const rentPayments = (appData.RentPayments || []).filter(r => r.Month == month && r.Year == year);
+
+      let csv = "\uFEFFالوحدة,المستأجر,المبلغ المستحق,المبلغ المدفوع,المتبقي,التاريخ\n";
+      rentPayments.forEach(r => {
+        csv += `"${r.UnitNo}","${r.TenantName}","${r.AmountDue}","${r.AmountPaid}","${r.AmountRemaining}","${r.PaymentDate}"\n`;
+      });
+
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `تقرير_برج_توفيق_${year}_${month}.csv`;
+      a.click();
+    }
+
+    // MODAL HANDLERS
+    function closeModal() {
+      document.getElementById("appModal").classList.add("hidden");
+      document.getElementById("appModal").classList.remove("flex");
+    }
+
+    function openUnitModal() {
+      document.getElementById("modalTitle").innerText = "إضافة وحدة جديدة للبرج";
+      document.getElementById("modalBody").innerHTML = `
+        <div class="space-y-3">
+          <input type="text" id="m_u_no" placeholder="رقم الوحدة (مثال: شقة 101 أو مخزن 1)" class="w-full p-2.5 border rounded-xl text-xs">
+          <select id="m_u_type" class="w-full p-2.5 border rounded-xl text-xs"><option value="شقة">شقة</option><option value="مخزن">مخزن</option></select>
+          <input type="text" id="m_u_floor" placeholder="الدور (1 إلى 6 أو الأرضي)" class="w-full p-2.5 border rounded-xl text-xs">
+          <input type="text" id="m_u_tenant" placeholder="اسم المستأجر (أتركه فارغاً إذا شاغرة)" class="w-full p-2.5 border rounded-xl text-xs">
+          <input type="text" id="m_u_phone" placeholder="رقم هاتف المستأجر" class="w-full p-2.5 border rounded-xl text-xs">
+          <input type="number" id="m_u_rent" placeholder="قيمة الإيجار الشهري (ج.م)" class="w-full p-2.5 border rounded-xl text-xs">
+          <button onclick="submitUnitForm()" class="w-full bg-sage-800 text-white p-3 rounded-xl font-bold text-xs hover:bg-sage-900 transition">حفظ الوحدة</button>
+        </div>`;
+      document.getElementById("appModal").classList.remove("hidden");
+      document.getElementById("appModal").classList.add("flex");
+    }
+
+    function openRentalModal() {
+      document.getElementById("modalTitle").innerText = "تسجيل دفعة إيجار جديدة";
+      
+      const unitOptions = (appData.Units || []).map(u => `<option value="${u.UnitNo}" data-tenant="${u.TenantName || ''}" data-rent="${u.MonthlyRent || 0}">${u.UnitNo} - ${u.TenantName || 'شاغرة'}</option>`).join('');
+
+      document.getElementById("modalBody").innerHTML = `
+        <div class="space-y-3">
+          <select id="m_r_unit" onchange="autoFillRentalData(this)" class="w-full p-2.5 border rounded-xl text-xs">
+            <option value="">اختر الوحدة...</option>
+            ${unitOptions}
+          </select>
+          <input type="text" id="m_r_tenant" placeholder="اسم المستأجر" class="w-full p-2.5 border rounded-xl text-xs bg-gray-50">
+          <div class="grid grid-cols-2 gap-2">
+            <select id="m_r_month" class="p-2.5 border rounded-xl text-xs"><option value="12">ديسمبر</option><option value="11">نوفمبر</option><option value="10">أكتوبر</option></select>
+            <select id="m_r_year" class="p-2.5 border rounded-xl text-xs"><option value="2026">2026</option></select>
+          </div>
+          <input type="number" id="m_r_due" placeholder="المبلغ المستحق (ج.م)" class="w-full p-2.5 border rounded-xl text-xs">
+          <input type="number" id="m_r_paid" placeholder="المبلغ المدفوع فعلياً (ج.م)" class="w-full p-2.5 border rounded-xl text-xs">
+          <input type="date" id="m_r_date" class="w-full p-2.5 border rounded-xl text-xs" value="${new Date().toISOString().split('T')[0]}">
+          <select id="m_r_method" class="w-full p-2.5 border rounded-xl text-xs"><option value="نقدي">نقدي</option><option value="تحويل بنكي">تحويل بنكي</option><option value="شيك">شيك</option></select>
+          <button onclick="submitRentalForm()" class="w-full bg-sage-800 text-white p-3 rounded-xl font-bold text-xs hover:bg-sage-900 transition">تسجيل التحصيل</button>
+        </div>`;
+      document.getElementById("appModal").classList.remove("hidden");
+      document.getElementById("appModal").classList.add("flex");
+    }
+
+    function autoFillRentalData(select) {
+      const option = select.options[select.selectedIndex];
+      if(option) {
+        document.getElementById("m_r_tenant").value = option.dataset.tenant || "";
+        document.getElementById("m_r_due").value = option.dataset.rent || 0;
+        document.getElementById("m_r_paid").value = option.dataset.rent || 0;
+      }
+    }
+
+    function openPartnerModal() {
+      document.getElementById("modalTitle").innerText = "إضافة شريك جديد";
+      document.getElementById("modalBody").innerHTML = `
+        <div class="space-y-3">
+          <input type="text" id="m_p_name" placeholder="الاسم الكامل للشريك" class="w-full p-2.5 border rounded-xl text-xs">
+          <input type="text" id="m_p_phone" placeholder="رقم الهاتف" class="w-full p-2.5 border rounded-xl text-xs">
+          <input type="number" id="m_p_share" placeholder="نسبة الملكية (%)" class="w-full p-2.5 border rounded-xl text-xs">
+          <input type="text" id="m_p_notes" placeholder="ملاحظات إضافية" class="w-full p-2.5 border rounded-xl text-xs">
+          <button onclick="submitPartnerForm()" class="w-full bg-sage-800 text-white p-3 rounded-xl font-bold text-xs hover:bg-sage-900 transition">حفظ الشريك</button>
+        </div>`;
+      document.getElementById("appModal").classList.remove("hidden");
+      document.getElementById("appModal").classList.add("flex");
+    }
+
+    function openWithdrawalModal() {
+      document.getElementById("modalTitle").innerText = "تسجيل سحب جديد لشريك";
+      const partnerOptions = (appData.Partners || []).map(p => `<option value="${p.Name}">${p.Name}</option>`).join('');
+
+      document.getElementById("modalBody").innerHTML = `
+        <div class="space-y-3">
+          <select id="m_w_partner" class="w-full p-2.5 border rounded-xl text-xs">${partnerOptions}</select>
+          <input type="number" id="m_w_amount" placeholder="المبلغ المسحوب (ج.م)" class="w-full p-2.5 border rounded-xl text-xs">
+          <input type="date" id="m_w_date" class="w-full p-2.5 border rounded-xl text-xs" value="${new Date().toISOString().split('T')[0]}">
+          <select id="m_w_month" class="w-full p-2.5 border rounded-xl text-xs"><option value="12">ديسمبر</option><option value="11">نوفمبر</option></select>
+          <select id="m_w_cat" class="w-full p-2.5 border rounded-xl text-xs"><option value="تحت حساب الأرباح">تحت حساب الأرباح</option><option value="مصروف شخصي">مصروف شخصي</option><option value="تسوية">تسوية حساب</option></select>
+          <input type="text" id="m_w_reason" placeholder="سبب أو بيان السحب" class="w-full p-2.5 border rounded-xl text-xs">
+          <button onclick="submitWithdrawalForm()" class="w-full bg-sage-800 text-white p-3 rounded-xl font-bold text-xs hover:bg-sage-900 transition">حفظ حركة السحب</button>
+        </div>`;
+      document.getElementById("appModal").classList.remove("hidden");
+      document.getElementById("appModal").classList.add("flex");
+    }
+
+    function openExpenseModal() {
+      document.getElementById("modalTitle").innerText = "تسجيل مصروف تشغيلي جديد";
+      document.getElementById("modalBody").innerHTML = `
+        <div class="space-y-3">
+          <select id="m_e_cat" class="w-full p-2.5 border rounded-xl text-xs">
+            <option value="صيانة">صيانة</option><option value="كهرباء">كهرباء</option><option value="مياه">مياه</option>
+            <option value="نظافة">نظافة</option><option value="أجر حارس">أجر حارس</option><option value="إصلاحات">إصلاحات</option>
+            <option value="ضرائب ورسوم">ضرائب ورسوم</option><option value="مصروفات إدارية">مصروفات إدارية</option>
+          </select>
+          <input type="text" id="m_e_desc" placeholder="الوصف والبيان التفصيلي" class="w-full p-2.5 border rounded-xl text-xs">
+          <input type="number" id="m_e_amount" placeholder="المبلغ (ج.م)" class="w-full p-2.5 border rounded-xl text-xs">
+          <input type="date" id="m_e_date" class="w-full p-2.5 border rounded-xl text-xs" value="${new Date().toISOString().split('T')[0]}">
+          <input type="text" id="m_e_beneficiary" placeholder="الجهة أو الشخص المستفيد" class="w-full p-2.5 border rounded-xl text-xs">
+          <button onclick="submitExpenseForm()" class="w-full bg-sage-800 text-white p-3 rounded-xl font-bold text-xs hover:bg-sage-900 transition">حفظ المصروف</button>
+        </div>`;
+      document.getElementById("appModal").classList.remove("hidden");
+      document.getElementById("appModal").classList.add("flex");
+    }
+
+    function openOtherIncomeModal() {
+      document.getElementById("modalTitle").innerText = "إضافة إيراد آخر غير إيجاري";
+      document.getElementById("modalBody").innerHTML = `
+        <div class="space-y-3">
+          <input type="text" id="m_i_desc" placeholder="بيان الإيراد" class="w-full p-2.5 border rounded-xl text-xs">
+          <input type="number" id="m_i_amount" placeholder="المبلغ (ج.م)" class="w-full p-2.5 border rounded-xl text-xs">
+          <input type="date" id="m_i_date" class="w-full p-2.5 border rounded-xl text-xs" value="${new Date().toISOString().split('T')[0]}">
+          <input type="text" id="m_i_cat" placeholder="التصنيف (إعلانات، تعويضات...)" class="w-full p-2.5 border rounded-xl text-xs">
+          <button onclick="submitOtherIncomeForm()" class="w-full bg-sage-800 text-white p-3 rounded-xl font-bold text-xs hover:bg-sage-900 transition">حفظ الإيراد</button>
+        </div>`;
+      document.getElementById("appModal").classList.remove("hidden");
+      document.getElementById("appModal").classList.add("flex");
+    }
+
+    // FORM SUBMISSION DISPATCHERS
+    async function submitUnitForm() {
+      const data = {
+        UnitNo: document.getElementById("m_u_no").value,
+        Type: document.getElementById("m_u_type").value,
+        Floor: document.getElementById("m_u_floor").value,
+        TenantName: document.getElementById("m_u_tenant").value,
+        TenantPhone: document.getElementById("m_u_phone").value,
+        MonthlyRent: document.getElementById("m_u_rent").value,
+        Status: document.getElementById("m_u_tenant").value ? "مؤجرة" : "شاغرة"
+      };
+      await sendPostRequest("Units", "add", data);
+      closeModal();
+    }
+
+    async function submitRentalForm() {
+      const due = Number(document.getElementById("m_r_due").value || 0);
+      const paid = Number(document.getElementById("m_r_paid").value || 0);
+      const data = {
+        UnitNo: document.getElementById("m_r_unit").value,
+        TenantName: document.getElementById("m_r_tenant").value,
+        Month: document.getElementById("m_r_month").value,
+        Year: document.getElementById("m_r_year").value,
+        AmountDue: due,
+        AmountPaid: paid,
+        AmountRemaining: due - paid,
+        PaymentDate: document.getElementById("m_r_date").value,
+        PaymentMethod: document.getElementById("m_r_method").value
+      };
+      await sendPostRequest("RentPayments", "add", data);
+      closeModal();
+    }
+
+    async function submitPartnerForm() {
+      const data = {
+        Name: document.getElementById("m_p_name").value,
+        Phone: document.getElementById("m_p_phone").value,
+        SharePercentage: document.getElementById("m_p_share").value,
+        Notes: document.getElementById("m_p_notes").value
+      };
+      await sendPostRequest("Partners", "add", data);
+      closeModal();
+    }
+
+    async function submitWithdrawalForm() {
+      const dateVal = document.getElementById("m_w_date").value;
+      const data = {
+        PartnerName: document.getElementById("m_w_partner").value,
+        Amount: document.getElementById("m_w_amount").value,
+        Date: dateVal,
+        Month: document.getElementById("m_w_month").value,
+        Category: document.getElementById("m_w_cat").value,
+        Reason: document.getElementById("m_w_reason").value,
+        PaymentMethod: "نقدي"
+      };
+      await sendPostRequest("Withdrawals", "add", data);
+      closeModal();
+    }
+
+    async function submitExpenseForm() {
+      const dateVal = document.getElementById("m_e_date").value;
+      const data = {
+        Category: document.getElementById("m_e_cat").value,
+        Description: document.getElementById("m_e_desc").value,
+        Amount: document.getElementById("m_e_amount").value,
+        Date: dateVal,
+        Month: dateVal ? dateVal.split("-")[1] : "12",
+        Beneficiary: document.getElementById("m_e_beneficiary").value,
+        PaymentMethod: "نقدي"
+      };
+      await sendPostRequest("Expenses", "add", data);
+      closeModal();
+    }
+
+    async function submitOtherIncomeForm() {
+      const data = {
+        Description: document.getElementById("m_i_desc").value,
+        Amount: document.getElementById("m_i_amount").value,
+        Date: document.getElementById("m_i_date").value,
+        Category: document.getElementById("m_i_cat").value || "إيرادات متنوعة",
+        PaymentMethod: "نقدي"
+      };
+      await sendPostRequest("OtherIncome", "add", data);
+      closeModal();
+    }
+
+    // BACKEND API POST REQUEST EXECUTOR
+    async function sendPostRequest(sheetName, action, data, id = "") {
+      // Local optimistic state update
+      if(!appData[sheetName]) appData[sheetName] = [];
+      
+      if(action === "add") {
+        const localObj = { ...data };
+        if(!localObj[sheetName.slice(0, -1) + "ID"]) {
+          localObj["ID"] = "LOCAL_" + new Date().getTime();
+        }
+        appData[sheetName].push(localObj);
+      } else if(action === "delete") {
+        appData[sheetName] = appData[sheetName].filter(item => Object.values(item).indexOf(id) === -1);
+      }
+
+      renderAllComponents();
+
+      try {
+        await fetch(API_URL, {
+          method: "POST",
+          body: JSON.stringify({ action: action, sheet: sheetName, data: data, id: id })
+        });
+        // Sync fresh data from backend
+        loadAppData();
+      } catch(err) {
+        console.warn("Operation recorded in local memory state.", err);
+      }
+    }
+
+    async function deleteRecord(sheetName, id) {
+      if(!confirm("هل أنت متأكد من رغبتك في حذف هذا السجل بشكل نهائي؟")) return;
+      await sendPostRequest(sheetName, "delete", {}, id);
+    }
+
+    // SYSTEM SETTINGS SAVER
+    function saveSettings() {
+      const url = document.getElementById("settingScriptUrl").value.trim();
+      if(url) {
+        localStorage.setItem("tawfiq_api_url", url);
+        API_URL = url;
+        alert("تم حفظ رابط Web App API بنجاح! جاري التوصيل والإعادة...");
+        loadAppData();
+      }
+    }
+
+    async function testApiConnection() {
+      try {
+        const res = await fetch(API_URL + "?action=getData");
+        const json = await res.json();
+        if(json.status === "success") {
+          alert("✅ الاتصال بناجح مع Google Apps Script! تم التعرف على جميع أوراق العمل.");
+        } else {
+          alert("⚠️ تم الاتصال ولكن السكريبت أرجع استجابة غير متوقعة: " + json.message);
+        }
+      } catch(e) {
+        alert("❌ تعذر الاتصال بـ Web App. يرجى التأكد من نشر السكريبت بـ Access: Anyone.");
+      }
+    }
+  </script>
+</body>
+</html>
